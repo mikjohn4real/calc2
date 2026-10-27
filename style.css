@@ -1,0 +1,424 @@
+/* ==========================================================================
+   style.css - Windows 11 Fluent Design 電卓スタイルシート
+   CSS Grid を活用したモダンで清潔感のあるレイアウト
+   ========================================================================== */
+
+/* 1. デザインシステム変数 (CSS Variables) */
+:root {
+  /* フォントスタック: Windows 11 の Segoe UI Variable を最優先 */
+  --font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  
+  /* 角丸と影 */
+  --radius-window: 12px;
+  --radius-button: 5px;
+  --shadow-window: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--calc-border);
+  --shadow-button: 0 1px 2px rgba(0, 0, 0, 0.12);
+  
+  /* トランジション */
+  --transition-fast: 0.1s cubic-bezier(0, 0, 0, 1);
+  --transition-normal: 0.2s cubic-bezier(0, 0, 0, 1);
+}
+
+/* ダークテーマ（デフォルト） */
+[data-theme="dark"] {
+  --bg-page: radial-gradient(circle at 50% 20%, #1f2735 0%, #0d1117 100%);
+  --calc-bg: rgba(32, 32, 36, 0.82);
+  --calc-border: rgba(255, 255, 255, 0.08);
+  --header-btn-hover: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-muted: rgba(255, 255, 255, 0.38);
+
+  /* 数字ボタン */
+  --key-num-bg: rgba(255, 255, 255, 0.06);
+  --key-num-hover: rgba(255, 255, 255, 0.11);
+  --key-num-active: rgba(255, 255, 255, 0.04);
+  --key-num-border: rgba(255, 255, 255, 0.04);
+
+  /* 機能ボタン（C, CE, ⌫ など） */
+  --key-func-bg: rgba(255, 255, 255, 0.03);
+  --key-func-hover: rgba(255, 255, 255, 0.07);
+  --key-func-active: rgba(255, 255, 255, 0.02);
+  --key-func-border: transparent;
+
+  /* 演算子ボタン（+, −, ×, ÷） */
+  --key-op-bg: rgba(255, 255, 255, 0.035);
+  --key-op-hover: rgba(255, 255, 255, 0.085);
+  --key-op-active: rgba(255, 255, 255, 0.025);
+  --key-op-border: transparent;
+
+  /* イコールボタン（Windows 11 アクセントブルー） */
+  --key-eq-bg: #0067c0;
+  --key-eq-hover: #1979c9;
+  --key-eq-active: #005aa6;
+  --key-eq-text: #ffffff;
+
+  --badge-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* ライトテーマ */
+[data-theme="light"] {
+  --bg-page: radial-gradient(circle at 50% 20%, #e2ecfa 0%, #f0f2f5 100%);
+  --calc-bg: rgba(243, 243, 246, 0.88);
+  --calc-border: rgba(0, 0, 0, 0.09);
+  --header-btn-hover: rgba(0, 0, 0, 0.06);
+
+  --text-primary: #1c1c1c;
+  --text-secondary: rgba(0, 0, 0, 0.62);
+  --text-muted: rgba(0, 0, 0, 0.4);
+
+  /* 数字ボタン（白カード） */
+  --key-num-bg: #ffffff;
+  --key-num-hover: #f9f9fb;
+  --key-num-active: #ececec;
+  --key-num-border: rgba(0, 0, 0, 0.06);
+
+  /* 機能ボタン */
+  --key-func-bg: rgba(235, 235, 238, 0.65);
+  --key-func-hover: rgba(225, 225, 230, 0.85);
+  --key-func-active: rgba(215, 215, 220, 0.9);
+  --key-func-border: transparent;
+
+  /* 演算子ボタン */
+  --key-op-bg: rgba(235, 235, 238, 0.65);
+  --key-op-hover: rgba(225, 225, 230, 0.85);
+  --key-op-active: rgba(215, 215, 220, 0.9);
+  --key-op-border: transparent;
+
+  /* イコールボタン */
+  --key-eq-bg: #0067c0;
+  --key-eq-hover: #1979c9;
+  --key-eq-active: #005aa6;
+  --key-eq-text: #ffffff;
+
+  --badge-bg: rgba(0, 0, 0, 0.06);
+}
+
+/* 2. ベースリセット & 全体レイアウト */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 不要なスピンボタンやスクロールバーを抑制 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-page);
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--text-primary);
+  overflow: hidden; /* 画面全体の不要なスクロールバーを抑止 */
+  transition: background var(--transition-normal);
+}
+
+/* 3. 電卓メインコンテナ（Windows 11 ウィンドウ風） */
+.calculator-app {
+  width: 100%;
+  max-width: 360px;
+  background: var(--calc-bg);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border: 1px solid var(--calc-border);
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-window);
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px 14px;
+  transition: background var(--transition-normal), border var(--transition-normal);
+  overflow: hidden; /* コンテナ外への要素はみ出しを防止 */
+}
+
+/* 4. ヘッダー / タイトルバー */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  color: var(--key-eq-bg);
+}
+
+.header-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.mode-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--badge-bg);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-btn {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-button);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.header-btn:hover {
+  background: var(--header-btn-hover);
+  color: var(--text-primary);
+}
+
+/* テーマアイコンの切り替え表示 */
+[data-theme="dark"] .icon-sun {
+  display: block;
+}
+[data-theme="dark"] .icon-moon {
+  display: none;
+}
+[data-theme="light"] .icon-sun {
+  display: none;
+}
+[data-theme="light"] .icon-moon {
+  display: block;
+}
+
+/* 5. ディスプレイ部（スクロールバーの非表示徹底） */
+.display-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-height: 108px;
+  padding: 8px 10px 12px;
+  text-align: right;
+  overflow: hidden;             /* スクロールバーの出現を抑止 */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE / Edge */
+}
+
+.display-section::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari, Edge */
+}
+
+.history-display {
+  font-size: 13px;
+  min-height: 18px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.history-display::-webkit-scrollbar {
+  display: none;
+}
+
+.current-display {
+  font-size: 46px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  transition: font-size var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;            /* 右端のスクロールバーを非表示 */
+  text-overflow: ellipsis;
+  max-width: 100%;
+  width: 100%;
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE / Edge */
+}
+
+.current-display::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari, Edge */
+}
+
+/* 桁数が多い場合のフォント縮小 */
+.current-display.font-medium {
+  font-size: 36px;
+}
+.current-display.font-small {
+  font-size: 26px;
+}
+.current-display.font-xsmall {
+  font-size: 20px;
+}
+
+/* 6. キーパッド部（CSS Grid: 6行 × 4列） */
+.keypad-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(6, 46px);
+  gap: 4px;
+}
+
+/* ボタン共通スタイル */
+.key {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-button);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: var(--shadow-button);
+  position: relative;
+}
+
+/* ホバー＆アクティブフィードバック */
+.key:hover {
+  transform: translateY(-0.5px);
+}
+
+.key:active,
+.key.pressed {
+  transform: scale(0.96) translateY(0.5px);
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--key-eq-bg);
+  outline-offset: 1px;
+}
+
+/* 数字キー */
+.num-key {
+  background: var(--key-num-bg);
+  color: var(--text-primary);
+  border-color: var(--key-num-border);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.num-key:hover {
+  background: var(--key-num-hover);
+}
+
+.num-key:active,
+.num-key.pressed {
+  background: var(--key-num-active);
+}
+
+/* 機能キー（CE, C, %, ⌫, 1/x, x², √x） */
+.func-key {
+  background: var(--key-func-bg);
+  color: var(--text-secondary);
+  border-color: var(--key-func-border);
+  font-size: 13.5px;
+}
+
+.func-key:hover {
+  background: var(--key-func-hover);
+  color: var(--text-primary);
+}
+
+.func-key:active,
+.func-key.pressed {
+  background: var(--key-func-active);
+}
+
+/* 演算子キー（+, −, ×, ÷） */
+.op-key {
+  background: var(--key-op-bg);
+  color: var(--text-primary);
+  border-color: var(--key-op-border);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.op-key:hover {
+  background: var(--key-op-hover);
+}
+
+.op-key:active,
+.op-key.pressed {
+  background: var(--key-op-active);
+}
+
+/* イコールキー（=） */
+.equals-key {
+  background: var(--key-eq-bg);
+  color: var(--key-eq-text);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.equals-key:hover {
+  background: var(--key-eq-hover);
+}
+
+.equals-key:active,
+.equals-key.pressed {
+  background: var(--key-eq-active);
+}
+
+/* 7. フッター */
+.app-footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 380px) {
+  .calculator-app {
+    padding: 8px 8px 12px;
+  }
+  .keypad-section {
+    grid-template-rows: repeat(6, 42px);
+    gap: 3px;
+  }
+  .current-display {
+    font-size: 40px;
+  }
+}

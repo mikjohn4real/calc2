@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windows 11 風 モダン電卓</title>
+  <meta name="description" content="Windows 11のFluent Designにインスパイアされた、モダンで快適な四則演算Web電卓アプリ。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="calculator-app" id="calculator-app">
+    <!-- タイトルバー / ウィンドウヘッダー -->
+    <header class="app-header">
+      <div class="header-left">
+        <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+          <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm-8 8H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V8h2v2zM5 4h14v2H5V4z"/>
+        </svg>
+        <span class="header-title">電卓</span>
+        <span class="mode-badge">標準</span>
+      </div>
+      <div class="header-right">
+        <!-- テーマ切り替え（ダーク / ライト） -->
+        <button id="theme-toggle" class="header-btn" title="テーマ切り替え" aria-label="テーマ切り替え">
+          <svg class="theme-icon icon-sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+          </svg>
+          <svg class="theme-icon icon-moon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 計算ディスプレイ部 -->
+    <section class="display-section" aria-live="polite">
+      <div id="history-display" class="history-display" aria-label="計算履歴"></div>
+      <div id="current-display" class="current-display" aria-label="計算結果">0</div>
+    </section>
+
+    <!-- キーパッド部（6行 × 4列 の CSS Grid） -->
+    <section class="keypad-section" aria-label="電卓キーパッド">
+      <!-- 行 1: %, CE, C, Backspace -->
+      <button class="key func-key" data-action="percent" title="パーセント (%)" aria-label="パーセント">%</button>
+      <button class="key func-key" data-action="clear-entry" title="入力をクリア (CE)" aria-label="入力をクリア">CE</button>
+      <button class="key func-key" data-action="clear" title="すべてクリア (Escape)" aria-label="すべてクリア">C</button>
+      <button class="key func-key" data-action="delete" title="1文字削除 (Backspace)" aria-label="バックスペース">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+          <line x1="18" y1="9" x2="12" y2="15"></line>
+          <line x1="12" y1="9" x2="18" y2="15"></line>
+        </svg>
+      </button>
+
+      <!-- 行 2: 1/x, x², √x, ÷ -->
+      <button class="key func-key" data-action="reciprocal" title="逆数 (1/x)" aria-label="逆数"><sup>1</sup>/<sub>x</sub></button>
+      <button class="key func-key" data-action="square" title="2乗 (x²)" aria-label="2乗">x²</button>
+      <button class="key func-key" data-action="sqrt" title="平方根 (√x)" aria-label="平方根">²√x</button>
+      <button class="key op-key" data-action="operator" data-value="÷" title="除算 (/)" aria-label="割る">÷</button>
+
+      <!-- 行 3: 7, 8, 9, × -->
+      <button class="key num-key" data-action="number" data-value="7" aria-label="7">7</button>
+      <button class="key num-key" data-action="number" data-value="8" aria-label="8">8</button>
+      <button class="key num-key" data-action="number" data-value="9" aria-label="9">9</button>
+      <button class="key op-key" data-action="operator" data-value="×" title="乗算 (*)" aria-label="掛ける">×</button>
+
+      <!-- 行 4: 4, 5, 6, − -->
+      <button class="key num-key" data-action="number" data-value="4" aria-label="4">4</button>
+      <button class="key num-key" data-action="number" data-value="5" aria-label="5">5</button>
+      <button class="key num-key" data-action="number" data-value="6" aria-label="6">6</button>
+      <button class="key op-key" data-action="operator" data-value="−" title="減算 (-)" aria-label="引く">−</button>
+
+      <!-- 行 5: 1, 2, 3, + -->
+      <button class="key num-key" data-action="number" data-value="1" aria-label="1">1</button>
+      <button class="key num-key" data-action="number" data-value="2" aria-label="2">2</button>
+      <button class="key num-key" data-action="number" data-value="3" aria-label="3">3</button>
+      <button class="key op-key" data-action="operator" data-value="+" title="加算 (+)" aria-label="足す">+</button>
+
+      <!-- 行 6: ±, 0, ., = -->
+      <button class="key num-key" data-action="toggle-sign" title="符号反転 (±)" aria-label="プラス・マイナス反転">±</button>
+      <button class="key num-key" data-action="number" data-value="0" aria-label="0">0</button>
+      <button class="key num-key" data-action="decimal" title="小数点 (.)" aria-label="小数点">.</button>
+      <button class="key equals-key" data-action="equals" title="計算結果 (Enter / =)" aria-label="イコール">=</button>
+    </section>
+
+    <!-- キーボード操作の案内フッター -->
+    <footer class="app-footer">
+      <span>キーボード入力（テンキー、Enter、Esc、Backspace）対応</span>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
