@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows 11 風 モダン電卓</title>
+  <title>Windows 11 風 Modern電卓</title>
   <meta name="description" content="Windows 11のFluent Designにインスパイアされた、モダンで快適な四則演算Web電卓アプリ。">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <main class="calculator-app" id="calculator-app">
     <!-- タイトルバー / ウィンドウヘッダー -->
     <header class="app-header">
       <div class="header-left">
         <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-          <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm-8 8H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V8h2v2zM5 4h14v2H5V4z"/>
+          <path
+            d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm-8 8H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V8h2v2zM5 4h14v2H5V4z" />
         </svg>
-        <span class="header-title">電卓</span>
+        <span class="header-title">My電卓</span>
         <span class="mode-badge">標準</span>
       </div>
       <div class="header-right">
         <!-- テーマ切り替え（ダーク / ライト） -->
         <button id="theme-toggle" class="header-btn" title="テーマ切り替え" aria-label="テーマ切り替え">
-          <svg class="theme-icon icon-sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="theme-icon icon-sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+            stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
-            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+            <path
+              d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42">
+            </path>
           </svg>
-          <svg class="theme-icon icon-moon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="theme-icon icon-moon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+            stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
@@ -45,7 +52,8 @@
       <button class="key func-key" data-action="clear-entry" title="入力をクリア (CE)" aria-label="入力をクリア">CE</button>
       <button class="key func-key" data-action="clear" title="すべてクリア (Escape)" aria-label="すべてクリア">C</button>
       <button class="key func-key" data-action="delete" title="1文字削除 (Backspace)" aria-label="バックスペース">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
           <line x1="18" y1="9" x2="12" y2="15"></line>
           <line x1="12" y1="9" x2="18" y2="15"></line>
@@ -53,7 +61,8 @@
       </button>
 
       <!-- 行 2: 1/x, x², √x, ÷ -->
-      <button class="key func-key" data-action="reciprocal" title="逆数 (1/x)" aria-label="逆数"><sup>1</sup>/<sub>x</sub></button>
+      <button class="key func-key" data-action="reciprocal" title="逆数 (1/x)"
+        aria-label="逆数"><sup>1</sup>/<sub>x</sub></button>
       <button class="key func-key" data-action="square" title="2乗 (x²)" aria-label="2乗">x²</button>
       <button class="key func-key" data-action="sqrt" title="平方根 (√x)" aria-label="平方根">²√x</button>
       <button class="key op-key" data-action="operator" data-value="÷" title="除算 (/)" aria-label="割る">÷</button>
@@ -91,4 +100,5 @@
 
   <script type="module" src="app.js"></script>
 </body>
+
 </html>
