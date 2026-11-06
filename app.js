@@ -6,18 +6,59 @@
 import { Calculator } from './calculator.js';
 
 // 1. DOM要素の取得
+const appEl = document.getElementById('calculator-app');
 const currentDisplayEl = document.getElementById('current-display');
 const historyDisplayEl = document.getElementById('history-display');
 const keypadEl = document.querySelector('.keypad-section');
+const hexKeypadEl = document.getElementById('hex-keypad');
+const radixPanelEl = document.getElementById('radix-panel');
+const modeSwitcherEl = document.querySelector('.mode-switcher');
 const themeToggleBtn = document.getElementById('theme-toggle');
 const htmlEl = document.documentElement;
+
+const radixValueEls = {
+  16: document.getElementById('radix-val-16'),
+  10: document.getElementById('radix-val-10'),
+  8: document.getElementById('radix-val-8'),
+  2: document.getElementById('radix-val-2'),
+};
 
 // 2. Calculator クラスのインスタンス生成
 const calculator = new Calculator();
 
 /**
+ * 現在の基数に応じて数字キー（0〜9, A〜F）の有効/無効状態を更新する関数
+ */
+function updateKeypadState() {
+  const allNumberButtons = document.querySelectorAll('button[data-action="number"]');
+  allNumberButtons.forEach((btn) => {
+    const val = btn.dataset.value;
+    const isValid = calculator.isValidDigitForRadix(val);
+    btn.disabled = !isValid;
+  });
+
+  // 基数行のアクティブ表示を更新
+  const radixRows = radixPanelEl.querySelectorAll('.radix-row');
+  radixRows.forEach((row) => {
+    const r = Number(row.dataset.radix);
+    row.classList.toggle('active', r === calculator.radix);
+  });
+
+  // モードタブのアクティブ表示とメインコンテナのクラスを更新
+  const modeTabs = modeSwitcherEl.querySelectorAll('.mode-tab');
+  modeTabs.forEach((tab) => {
+    const isCurrent = tab.dataset.mode === calculator.mode;
+    tab.classList.toggle('active', isCurrent);
+    tab.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+  });
+
+  appEl.classList.toggle('mode-programmer', calculator.mode === 'programmer');
+  appEl.classList.toggle('mode-standard', calculator.mode === 'standard');
+}
+
+/**
  * 画面（DOM）の表示を更新する関数
- * 数値の長さに応じて文字サイズを自動調整します。
+ * 数値の長さに応じて文字サイズを自動調整し、プログラマーモード時は各基数の値も更新します。
  */
 function updateDisplay() {
   const currentText = calculator.getCurrentDisplay();
@@ -36,6 +77,18 @@ function updateDisplay() {
   } else if (len > 8) {
     currentDisplayEl.classList.add('font-medium');
   }
+
+  // 基数変換パネル（HEX / DEC / OCT / BIN）の値を更新
+  if (calculator.mode === 'programmer') {
+    const conversions = calculator.getRadixConversions();
+    for (const r of [16, 10, 8, 2]) {
+      if (radixValueEls[r]) {
+        radixValueEls[r].textContent = conversions[r];
+      }
+    }
+  }
+
+  updateKeypadState();
 }
 
 /**
@@ -97,39 +150,80 @@ function handleAction(action, value) {
 
 /**
  * ボタン要素に一瞬アクティブアニメーションを付与（視覚フィードバック）
- * @param {HTMLElement} button 
+ * @param {HTMLElement} button
  */
 function triggerButtonEffect(button) {
-  if (!button) return;
+  if (!button || button.disabled) return;
   button.classList.add('pressed');
   setTimeout(() => {
     button.classList.remove('pressed');
   }, 120);
 }
 
-// 3. クリックイベントリスナー（イベント委譲）
-keypadEl.addEventListener('click', (e) => {
+// 3. キーパッドクリックイベント（メインキーパッド & 16進キーパッド）
+function onKeypadClick(e) {
   const button = e.target.closest('button.key');
-  if (!button) return;
+  if (!button || button.disabled) return;
 
   const action = button.dataset.action;
   const value = button.dataset.value || null;
 
   triggerButtonEffect(button);
   handleAction(action, value);
+}
+
+keypadEl.addEventListener('click', onKeypadClick);
+hexKeypadEl.addEventListener('click', onKeypadClick);
+
+// 4. 基数変換パネル（HEX / DEC / OCT / BIN）クリックイベント
+radixPanelEl.addEventListener('click', (e) => {
+  const row = e.target.closest('.radix-row');
+  if (!row) return;
+
+  const newRadix = Number(row.dataset.radix);
+  calculator.setRadix(newRadix);
+  updateDisplay();
 });
 
-// 4. キーボードイベントリスナー
+// 5. モード切り替え（標準 / プログラマー）クリックイベント
+modeSwitcherEl.addEventListener('click', (e) => {
+  const tab = e.target.closest('.mode-tab');
+  if (!tab) return;
+
+  const newMode = tab.dataset.mode;
+  calculator.setMode(newMode);
+  updateDisplay();
+});
+
+// 6. キーボードイベントリスナー
 window.addEventListener('keydown', (e) => {
+  // Ctrl / Alt / Meta 併用時はショートカットを優先して無視
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+
   let targetSelector = null;
   let action = null;
   let value = null;
 
+  const upperKey = e.key.toUpperCase();
+
   // 数字キー (0 - 9)
   if (e.key >= '0' && e.key <= '9') {
+    if (!calculator.isValidDigitForRadix(e.key)) return;
     targetSelector = `button[data-action="number"][data-value="${e.key}"]`;
     action = 'number';
     value = e.key;
+  }
+  // 16進数キー (A - F)
+  else if (
+    calculator.mode === 'programmer' &&
+    upperKey.length === 1 &&
+    upperKey >= 'A' &&
+    upperKey <= 'F'
+  ) {
+    if (!calculator.isValidDigitForRadix(upperKey)) return;
+    targetSelector = `button[data-action="number"][data-value="${upperKey}"]`;
+    action = 'number';
+    value = upperKey;
   }
   // 小数点 (. / ,)
   else if (e.key === '.' || e.key === ',') {
@@ -181,7 +275,7 @@ window.addEventListener('keydown', (e) => {
     targetSelector = 'button[data-action="percent"]';
     action = 'percent';
   }
-  // 符号反転 (F9 または @)
+  // 符号反転 (F9)
   else if (e.key === 'F9') {
     e.preventDefault();
     targetSelector = 'button[data-action="toggle-sign"]';
@@ -197,13 +291,12 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// 5. テーマ（ダーク / ライト）切り替え制御
+// 7. テーマ（ダーク / ライト）切り替え制御
 function initTheme() {
   const savedTheme = localStorage.getItem('calc_theme');
   if (savedTheme) {
     htmlEl.setAttribute('data-theme', savedTheme);
   } else {
-    // OSのカラースキームを初期値として反映
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     htmlEl.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
   }

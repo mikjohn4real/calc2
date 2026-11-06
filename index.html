@@ -5,12 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Windows 11 風 Modern電卓</title>
-  <meta name="description" content="Windows 11のFluent Designにインスパイアされた、モダンで快適な四則演算Web電卓アプリ。">
+  <meta name="description" content="Windows 11のFluent Designにインスパイアされた、基数変換（HEX/DEC/OCT/BIN）＆小数計算対応のモダンWeb電卓アプリ。">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <main class="calculator-app" id="calculator-app">
+  <main class="calculator-app mode-programmer" id="calculator-app">
     <!-- タイトルバー / ウィンドウヘッダー -->
     <header class="app-header">
       <div class="header-left">
@@ -19,7 +19,11 @@
             d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm-8 8H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V8h2v2zM5 4h14v2H5V4z" />
         </svg>
         <span class="header-title">My電卓</span>
-        <span class="mode-badge">標準</span>
+        <!-- モード切り替えタブ（標準 / プログラマー） -->
+        <div class="mode-switcher" role="tablist" aria-label="電卓モード切り替え">
+          <button type="button" class="mode-tab" data-mode="standard" role="tab" aria-selected="false">標準</button>
+          <button type="button" class="mode-tab active" data-mode="programmer" role="tab" aria-selected="true">プログラマー</button>
+        </div>
       </div>
       <div class="header-right">
         <!-- テーマ切り替え（ダーク / ライト） -->
@@ -43,6 +47,40 @@
     <section class="display-section" aria-live="polite">
       <div id="history-display" class="history-display" aria-label="計算履歴"></div>
       <div id="current-display" class="current-display" aria-label="計算結果">0</div>
+    </section>
+
+    <!-- Windows 11 風 基数変換セレクター（プログラマーモード時に表示） -->
+    <section id="radix-panel" class="radix-panel" aria-label="基数変換パネル">
+      <button type="button" class="radix-row" data-radix="16" aria-label="16進数 (HEX)">
+        <span class="radix-indicator"></span>
+        <span class="radix-label">HEX</span>
+        <span class="radix-value" id="radix-val-16">0</span>
+      </button>
+      <button type="button" class="radix-row active" data-radix="10" aria-label="10進数 (DEC)">
+        <span class="radix-indicator"></span>
+        <span class="radix-label">DEC</span>
+        <span class="radix-value" id="radix-val-10">0</span>
+      </button>
+      <button type="button" class="radix-row" data-radix="8" aria-label="8進数 (OCT)">
+        <span class="radix-indicator"></span>
+        <span class="radix-label">OCT</span>
+        <span class="radix-value" id="radix-val-8">0</span>
+      </button>
+      <button type="button" class="radix-row" data-radix="2" aria-label="2進数 (BIN)">
+        <span class="radix-indicator"></span>
+        <span class="radix-label">BIN</span>
+        <span class="radix-value" id="radix-val-2">0</span>
+      </button>
+    </section>
+
+    <!-- 16進数専用キー（A〜F: プログラマーモード時に表示） -->
+    <section id="hex-keypad" class="hex-keypad" aria-label="16進数キーパッド">
+      <button class="key hex-key" data-action="number" data-value="A" aria-label="A">A</button>
+      <button class="key hex-key" data-action="number" data-value="B" aria-label="B">B</button>
+      <button class="key hex-key" data-action="number" data-value="C" aria-label="C">C</button>
+      <button class="key hex-key" data-action="number" data-value="D" aria-label="D">D</button>
+      <button class="key hex-key" data-action="number" data-value="E" aria-label="E">E</button>
+      <button class="key hex-key" data-action="number" data-value="F" aria-label="F">F</button>
     </section>
 
     <!-- キーパッド部（6行 × 4列 の CSS Grid） -->
@@ -94,7 +132,7 @@
 
     <!-- キーボード操作の案内フッター -->
     <footer class="app-footer">
-      <span>キーボード入力（テンキー、Enter、Esc、Backspace）対応</span>
+      <span>キーボード入力（0-9, A-F, 小数点, 四則演算, Enter, Esc）対応</span>
     </footer>
   </main>
 
